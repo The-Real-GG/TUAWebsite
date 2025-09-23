@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Resources — TUA Academy</title>
+  <link rel="icon" href="assets/TuaLogo_nobg.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* small page-specific tweaks already handled in main stylesheet */
+    /* ensure details summary arrow visible and styled */
+    summary::-webkit-details-marker { display:none; } /* hide default marker */
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <img src="assets/TuaLogo_nobg.png" alt="TUA Academy logo" class="logo">
+        <div class="brand-text"><h1>TUA Academy</h1></div>
+      </a>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="videos.html" class="nav-link">Videos</a>
+        <a href="resources.html" class="nav-link active">Resources</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container resources-page" style="padding-top:30px;">
+      <h2>Practice PDFs & Reference Materials</h2>
+      <p class="muted">Expand a year to browse tests. Click <strong>View</strong> to preview, or <strong>Download</strong> to save.</p>
+
+      <div id="resources-list" class="resources-list" style="margin-top:18px;">
+        <div class="loader">Loading resources…</div>
+      </div>
+
+      <div id="viewer" class="pdf-viewer" hidden>
+        <button id="close-viewer" class="btn small">Close</button>
+        <iframe id="pdf-frame" src="" frameborder="0"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>© TUA Academy</div>
+      <div>astrolearner007@gmail.com</div>
+    </div>
+  </footer>
+
+  <script>
+    const list = document.getElementById('resources-list');
+    const viewer = document.getElementById('viewer');
+    const pdfFrame = document.getElementById('pdf-frame');
+    const closeViewer = document.getElementById('close-viewer');
+
+    function buildResourceNode(item){
+      const div = document.createElement('div');
+      div.className = 'resource';
+
+      const left = document.createElement('div');
+      left.className = 'left';
+      const title = document.createElement('div');
+      title.className = 'title';
+      title.textContent = item.title;
+      left.appendChild(title);
+      if(item.description){
+        const desc = document.createElement('div');
+        desc.className = 'desc';
+        desc.textContent = item.description;
+        left.appendChild(desc);
+      } else {
+        const pathEl = document.createElement('div');
+        pathEl.className='desc';
+        pathEl.textContent = item.path.split('/').slice(-2).join('/');
+        left.appendChild(pathEl);
+      }
+
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+
+      const openBtn = document.createElement('a');
+      openBtn.className = 'btn small';
+      openBtn.textContent = 'Open (new tab)';
+      openBtn.href = item.path;
+      openBtn.target = '_blank';
+      openBtn.rel = 'noopener';
+
+      const viewBtn = document.createElement('button');
+      viewBtn.className = 'btn small ghost';
+      viewBtn.textContent = 'View';
+      viewBtn.addEventListener('click', ()=> {
+        pdfFrame.src = item.path;
+        viewer.hidden = false;
+        window.scrollTo({top:0,behavior:'smooth'});
+      });
+
+      const dlBtn = document.createElement('a');
+      dlBtn.className = 'btn small outline';
+      dlBtn.textContent = 'Download';
+      dlBtn.href = item.path;
+      dlBtn.setAttribute('download','');
+
+      actions.appendChild(openBtn);
+      actions.appendChild(viewBtn);
+      actions.appendChild(dlBtn);
+
+      div.appendChild(left);
+      div.appendChild(actions);
+      return div;
+    }
+
+    closeViewer.addEventListener('click', ()=>{
+      pdfFrame.src = '';
+      viewer.hidden = true;
+    });
+
+    fetch('resources/resources.json')
+      .then(r => r.json())
+      .then(data => {
+        list.innerHTML = '';
+        if(!Array.isArray(data) || data.length === 0){
+          list.innerHTML = '<p>No resources found. Add resources/resources.json and files under resources/files/</p>';
+          return;
+        }
+
+        data.forEach(group => {
+          const details = document.createElement('details');
+          details.open = false;
+
+          const summary = document.createElement('summary');
+
+          const leftSummary = document.createElement('div');
+          leftSummary.className = 'summary-left';
+          const groupTitle = document.createElement('div');
+          groupTitle.className = 'group-title';
+          groupTitle.textContent = group.group;
+          const groupCount = document.createElement('div');
+          groupCount.className = 'group-count';
+          groupCount.textContent = `(${group.items ? group.items.length : 0})`;
+          leftSummary.appendChild(groupTitle);
+          leftSummary.appendChild(groupCount);
+
+          const arrow = document.createElement('div');
+          arrow.className = 'summary-arrow';
+          arrow.innerHTML = '▸';
+
+          summary.appendChild(leftSummary);
+          summary.appendChild(arrow);
+
+          details.appendChild(summary);
+
+          const itemsWrapper = document.createElement('div');
+          itemsWrapper.className = 'group-items';
+
+          if(Array.isArray(group.items) && group.items.length){
+            group.items.forEach(item => {
+              const node = buildResourceNode(item);
+              itemsWrapper.appendChild(node);
+            });
+          } else {
+            const p = document.createElement('div');
+            p.className = 'muted';
+            p.textContent = 'No items in this group.';
+            itemsWrapper.appendChild(p);
+          }
+
+          details.appendChild(itemsWrapper);
+          list.appendChild(details);
+        });
+
+        // update arrow symbol when details open/close
+        document.querySelectorAll('details').forEach(d=>{
+          d.addEventListener('toggle', ()=>{
+            const arrow = d.querySelector('.summary-arrow');
+            if(d.open) arrow.innerHTML = '▾'; else arrow.innerHTML = '▸';
+          });
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        list.innerHTML = '<p>Could not load resources.json. Make sure <code>/resources/resources.json</code> exists and is valid JSON.</p>';
+      });
+  </script>
+</body>
+</html>

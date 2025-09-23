@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Videos — TUA Academy</title>
+  <link rel="icon" href="assets/TuaLogo_nobg.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <img src="assets/TuaLogo_nobg.png" alt="TUA Academy logo" class="logo">
+        <div class="brand-text">
+          <h1>TUA Academy</h1>
+        </div>
+      </a>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="videos.html" class="nav-link active">Videos</a>
+        <a href="resources.html" class="nav-link">Resources</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container" style="padding-top:34px;">
+      <!-- Large captivating channel button -->
+      <div style="display:flex;justify-content:center;margin-bottom:24px;">
+        <a class="btn contact" href="https://www.youtube.com/@TUAacademy" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;">
+          <svg width="28" height="20" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 2.3a3 3 0 0 0-2.1-2.12C19.78 0 12 0 12 0s-7.78 0-9.4.18A3 3 0 0 0 .5 2.3 31.1 31.1 0 0 0 0 8a31.1 31.1 0 0 0 .5 5.7 3 3 0 0 0 2.1 2.12C4.22 16 12 16 12 16s7.78 0 9.4-.18a3 3 0 0 0 2.1-2.12A31.1 31.1 0 0 0 24 8a31.1 31.1 0 0 0-.5-5.7z" fill="#FF0000"/><path d="M9.5 11V5l6 3-6 3z" fill="#fff"/></svg>
+          Visit TUA Academy on YouTube
+        </a>
+      </div>
+
+      <h2 style="margin-bottom:6px;">All TUA Academy Videos</h2>
+      <p class="muted">Browse lessons and click a thumbnail to watch.</p>
+
+      <div id="videos-grid" class="videos-grid">
+        <div class="loader">Loading videos…</div>
+      </div>
+
+      <div id="video-modal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+          <button class="modal-close" id="modal-close">✕</button>
+          <div id="modal-body"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>© TUA Academy</div>
+      <div>astrolearner007@gmail.com</div>
+    </div>
+  </footer>
+
+  <script src="js/videos.js"></script>
+</body>
+</html>
